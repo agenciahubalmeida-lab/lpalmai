@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#f4f6fb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ALM AI">
+  <title>Painel · ALM AI</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/192.png">
+  <link rel="icon" href="/logo.png">
+  <link rel="stylesheet" href="/painel.css">
+  <script src="/painel.js" defer></script>
+</head>
+<body>
+  <header class="top"><a class="brand" href="/painel"><img src="/logo.png" alt="" width="34" height="34"><span>ALM <b>AI</b></span></a><span class="private"><i></i> Acesso privado</span><button id="logout" class="text-button" hidden>Sair</button></header>
+  <main>
+    <section id="login-view" class="login" hidden>
+      <span class="eyebrow">SEU COMERCIAL, NA PALMA DA MÃO</span>
+      <h1>O próximo cliente<br>começa aqui<span>.</span></h1>
+      <p class="muted">Acompanhe os diagnósticos e receba um aviso sempre que chegar uma nova oportunidade.</p>
+      <form id="login-form" class="login-form">
+        <label for="password">Senha do painel</label>
+        <div class="password-wrap"><input id="password" type="password" autocomplete="current-password" required maxlength="200" placeholder="Digite sua senha"><button type="button" id="show-password" aria-label="Mostrar senha">Mostrar</button></div>
+        <button class="primary full" id="login-button">Entrar no painel <span aria-hidden="true">→</span></button>
+        <p id="login-error" class="error" role="alert"></p>
+      </form>
+      <div class="login-foot"><span class="mini-mark">↗</span><p>Feito para acompanhar sua operação.<br><b>Mesmo quando você está longe da mesa.</b></p></div>
+    </section>
+    <p id="opening" class="loading" role="status">Abrindo seu painel…</p>
+    <section id="dashboard" hidden>
+      <div class="heading"><div><span class="eyebrow">CENTRAL DE DIAGNÓSTICOS</span><h1>Novas conversas.<br>Novas oportunidades<span>.</span></h1></div><button id="refresh" class="secondary" aria-label="Atualizar diagnósticos">↻ <span>Atualizar</span></button></div>
+      <div class="stats" aria-label="Resumo dos diagnósticos">
+        <div class="stat blue"><span>Não lidos</span><b id="stat-unread">0</b><small>Para você acompanhar</small></div>
+        <div class="stat"><span>Hoje</span><b id="stat-today">0</b><small>Novos diagnósticos</small></div>
+        <div class="stat"><span>Qualificados</span><b id="stat-qualified">0</b><small>Perfis A e B</small></div>
+        <div class="stat"><span>Total</span><b id="stat-total">0</b><small>Respostas salvas</small></div>
+      </div>
+      <section class="notifications" id="avisos" aria-labelledby="push-title">
+        <div class="notification-icon" aria-hidden="true">♧</div>
+        <div class="notification-copy"><span class="eyebrow">AVISOS NO SEU CELULAR</span><h2 id="push-title">Chegou um diagnóstico.<br>Você fica sabendo.</h2><p id="push-state">Preparando as notificações…</p></div>
+        <div class="notification-actions"><button class="primary" id="enable-push" disabled>Preparando avisos…</button><div class="push-tools"><button id="test-push" hidden>Enviar teste</button><button id="disable-push" hidden>Desativar</button></div></div>
+        <details class="install-help" id="install-help"><summary>Como ativar no meu iPhone?</summary><ol><li>Abra este painel no <b>Safari</b>.</li><li>Toque em <b>Compartilhar → Adicionar à Tela de Início</b>.</li><li>Abra o ícone <b>ALM AI</b>, entre no painel e toque em <b>Ativar notificações → Permitir</b>.</li></ol><p>Requer iOS 16.4 ou posterior. Depois, use Enviar teste e confira a notificação no iPhone.</p></details>
+        <p id="push-message" class="push-message" role="status"></p>
+      </section>
+      <section id="diagnosticos" class="leads-section" aria-labelledby="leads-title">
+        <div class="list-heading"><div><span class="eyebrow">CADA RESPOSTA, UM PRÓXIMO PASSO</span><h2 id="leads-title">Seus diagnósticos</h2></div><span id="list-count" class="count"></span></div>
+        <form class="search" id="search-form"><label for="search" class="sr-only">Buscar nome, empresa ou WhatsApp</label><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Buscar nome, empresa ou WhatsApp" maxlength="100"><button type="submit">Buscar</button></form>
+        <div class="filters" role="group" aria-label="Filtrar diagnósticos"><button data-filter="all" aria-pressed="true">Todos</button><button data-filter="unread" aria-pressed="false">Não lidos</button><button data-filter="alto" aria-pressed="false">Perfil A</button><button data-filter="medio" aria-pressed="false">Perfil B</button><button data-filter="baixo" aria-pressed="false">Perfil C</button></div>
+        <p id="panel-error" class="error banner" role="alert" hidden></p>
+        <p id="queue-note" class="queue-note" hidden></p>
+        <div id="leads" class="lead-list"></div>
+        <div id="empty" class="empty" hidden><span aria-hidden="true">↗</span><h3 id="empty-title">Tudo pronto para o primeiro contato.</h3><p id="empty-copy">Assim que alguém concluir o diagnóstico na página, as respostas vão aparecer aqui.</p><a href="/" target="_blank" rel="noopener">Abrir a página do diagnóstico →</a></div>
+        <button class="secondary load-more" id="load-more" hidden>Carregar mais diagnósticos</button>
+        <p class="list-footer" id="updated-at"></p>
+      </section>
+      <footer class="footer">ALM AI <span>·</span> Hub Almeida</footer>
+      <nav class="bottom-nav" aria-label="Navegação do painel"><a href="#diagnosticos"><span aria-hidden="true">▤</span>Diagnósticos</a><a href="#avisos"><span aria-hidden="true">♧</span>Notificações</a></nav>
+    </section>
+  </main>
+</body>
+</html>

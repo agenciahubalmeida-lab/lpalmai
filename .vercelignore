@@ -1,3 +1,6 @@
 .env*
 .vercel
 *.b64
+tests
+test-results
+supabase

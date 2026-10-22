@@ -1,0 +1,16 @@
+{
+  "id": "/painel",
+  "name": "ALM AI · Diagnósticos",
+  "short_name": "ALM AI",
+  "description": "Seu painel privado de diagnósticos e oportunidades.",
+  "lang": "pt-BR",
+  "start_url": "/painel",
+  "scope": "/painel",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#f4f6fb",
+  "icons": [
+    { "src": "/icons/192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

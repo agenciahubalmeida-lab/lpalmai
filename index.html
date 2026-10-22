@@ -40,7 +40,7 @@
   }
   function track(name,data,opts){
     opts=opts||{};data=data||{};
-    var id=name+'.'+uid(),cd={};for(var k in data)cd[k]=data[k];
+    var id=opts.event_id||name+'.'+uid(),cd={};for(var k in data)cd[k]=data[k];
     // O Pixel inicia uma única vez; nome e telefone seguem pela CAPI, com hash no servidor.
     try{fbq(opts.custom?'trackCustom':'track',name,cd,{eventID:id});}catch(_){}
     send({event_name:name,event_id:id,custom_data:cd,user:opts.user||null});
@@ -555,7 +555,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
         </div>
 
         <div class="q" data-step="6" hidden>
-          <h3>Pra quem o especialista vai mandar mensagem?</h3><p class="hint">Seus dados vão só para o nosso time comercial.</p>
+          <h3>Pra quem o especialista vai mandar mensagem?</h3><p class="hint">Salvamos suas respostas para preparar o diagnóstico e entrar em contato com você.</p>
           <div class="fields">
             <div class="field"><label for="f-nome">Seu nome</label><input id="f-nome" autocomplete="name" placeholder="Ana Souza"></div>
             <div class="field"><label for="f-empresa">Empresa</label><input id="f-empresa" autocomplete="organization" placeholder="Clínica Vita"></div>
@@ -617,7 +617,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
   var nextBtn=document.getElementById('next'),backBtn=document.getElementById('back'),err=document.getElementById('err');
   var pnum=document.getElementById('pnum'),pbar=document.getElementById('pbar'),result=document.getElementById('result'),qnav=document.getElementById('qnav');
   var cur=0,ans={},score={},agents={};
-  var started=false,reached=0,leadSent=false;
+  var started=false,reached=0,leadSent=false,saving=false,submissionId=null;
   function pad(n){return (n<10?'0':'')+n;}
   function show(i){
     cur=i;steps.forEach(function(s,j){s.hidden=j!==i;});
@@ -651,22 +651,37 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
     var nome=val('f-nome'),emp=val('f-empresa'),w=val('f-whats').replace(/\D/g,'');
     if(!nome){err.textContent='Coloque o seu nome.';return false;}
     if(!emp){err.textContent='Coloque o nome da empresa.';return false;}
-    if(w.length<10||w.length>13){err.textContent='Coloque um WhatsApp válido, com DDD.';return false;}
+    if((w.length===12||w.length===13)&&w.slice(0,2)==='55')w=w.slice(2);
+    if(!/^[1-9]{2}(?:[2-5]\d{7}|9\d{8})$/.test(w)){err.textContent='Coloque um WhatsApp válido, com DDD.';return false;}
     ans.nome=nome;ans.empresa=emp;ans.whats=val('f-whats');ans.ig=val('f-ig');return true;
   }
   function val(id){return document.getElementById(id).value.trim();}
   backBtn.addEventListener('click',function(){if(cur>0)show(cur-1);});
   form.addEventListener('submit',function(e){e.preventDefault();if(!valid(cur))return;if(cur<N-1){show(cur+1);return;}finish();});
 
-  function finish(){
+  async function finish(){
+    if(saving)return;
+    saving=true;nextBtn.disabled=true;backBtn.disabled=true;nextBtn.textContent='Salvando diagnóstico…';err.textContent='';
+    if(!submissionId){
+      try{submissionId=crypto.randomUUID();}catch(_){submissionId='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16);});}
+    }
+    var saved;
+    try{
+      var response=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submission_id:submissionId,nome:ans.nome,empresa:ans.empresa,whats:ans.whats,ig:ans.ig,answers:{atende:ans.atende,espera:ans.espera,leads:ans.leads,perdas:ans.perdas,segmento:ans.segmento,investimento:ans.investimento},utm:TRACK.utm||{},referrer:document.referrer}),signal:AbortSignal.timeout(25000)});
+      saved=await response.json();
+      if(!response.ok||!saved.ok)throw Error(saved.error||'Não foi possível salvar. Tente novamente.');
+    }catch(e){
+      err.textContent=e.name==='TimeoutError'||e.name==='AbortError'?'O salvamento demorou mais que o esperado. Suas respostas continuam aqui. Tente novamente.':e.message==='Failed to fetch'?'Sem conexão. Confira sua internet e tente novamente.':e.message;
+      saving=false;nextBtn.disabled=false;backBtn.disabled=false;nextBtn.textContent='Ver meu resultado →';return;
+    }
     var s=(score.atende||0)+(score.espera||0)+(score.leads||0)+(score.investimento||0);
-    var tier=s>=9?'alto':s>=5?'medio':'baixo';
+    var tier=saved.tier;
     if((score.investimento||0)<0)tier='baixo';
-    var order=Object.keys(agents).sort(function(a,b){return agents[b]-agents[a];});
+    var order=saved.team||Object.keys(agents).sort(function(a,b){return agents[b]-agents[a];});
     if(order.indexOf('sdr')<0&&(score.espera||0)>=2)order.unshift('sdr');
     if(!order.length)order=['sdr'];
     var team=order.slice(0,3).map(function(k){return AG[k];});
-    var proto='ALM-'+Date.now().toString(36).toUpperCase().slice(-5);
+    var proto=saved.protocolo;
     var tierLabel={alto:'A',medio:'B',baixo:'C'}[tier];
     var u=TRACK.utm||{},origem=[u.utm_source,u.utm_campaign,u.utm_content].filter(Boolean).join(' / ');
     var msg='*[LP ALM AI] Diagnóstico concluído*\n'+
@@ -682,8 +697,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
     var leadData={content_name:'Diagnostico ALM AI',content_category:ans.segmento,lead_tier:tier,perfil:tierLabel,protocolo:proto,leads_mes:ans.leads,tempo_resposta:ans.espera,investimento:ans.investimento,time_sugerido:team.map(function(a){return a.n;}).join(', ')};
     if(!leadSent){
       leadSent=true;
-      TRACK.track('Lead',leadData,{user:user});
-      if(tier!=='baixo')TRACK.track('LeadQualificado',leadData,{custom:true,user:user});
+      TRACK.track('Lead',leadData,{user:user,event_id:'Lead.'+saved.id});
+      if(tier!=='baixo')TRACK.track('LeadQualificado',leadData,{custom:true,user:user,event_id:'LeadQualificado.'+saved.id});
     }
     try{if(window.gtag)window.gtag('event','generate_lead',{lead_tier:tier});}catch(_){}
 
@@ -700,7 +715,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
     result.innerHTML=head+(tier==='baixo'?'':'<p class="small" style="margin-top:-4px"><b style="color:var(--ink)">Seu time sugerido</b></p>'+tm)+cta;
     var contacted=false;
     var waLink=result.querySelector('a[href^="https://wa.me/"]');
-    if(waLink)waLink.addEventListener('click',function(){if(contacted)return;contacted=true;TRACK.track('Contact',{content_name:'WhatsApp diagnostico',lead_tier:tier,protocolo:proto},{user:user});});
+    if(waLink)waLink.addEventListener('click',function(){if(contacted)return;contacted=true;TRACK.track('Contact',{content_name:'WhatsApp diagnostico',lead_tier:tier,protocolo:proto},{user:user,event_id:'Contact.'+saved.id});});
     steps.forEach(function(s){s.hidden=true;});result.hidden=false;qnav.hidden=true;err.textContent='';
     pnum.textContent='CONCLUÍDO';done=true;m.classList.remove('show');pbar.style.width='100%';
     try{form.scrollIntoView({behavior:'smooth',block:'start'});}catch(_){}
