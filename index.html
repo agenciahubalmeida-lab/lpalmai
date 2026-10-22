@@ -23,15 +23,12 @@
   ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','utm_id','fbclid'].forEach(function(k){var v=qs.get(k);if(v)utm[k]=v.slice(0,200);});
   if(Object.keys(utm).length)ls('alm_utm',JSON.stringify(utm));
   else{try{utm=JSON.parse(ls('alm_utm')||'{}')||{};}catch(_){utm={};}}
-  if(qs.get('fbclid')&&!ck('_fbc'))setCk('_fbc','fb.1.'+Date.now()+'.'+qs.get('fbclid'),90);
+  var clickId=qs.get('fbclid'),previousClick=ck('_fbc');
+  if(clickId&&(!previousClick||previousClick.split('.').slice(3).join('.')!==clickId))setCk('_fbc','fb.1.'+Date.now()+'.'+clickId,90);
   if(qs.get('meta_test'))ss('alm_test',qs.get('meta_test'));
 
-  function phone(p){var d=String(p||'').replace(/\D/g,'').replace(/^0+/,'');if(d.length===10||d.length===11)d='55'+d;return d;}
-  function names(full){var p=String(full||'').trim().toLowerCase().split(/\s+/).filter(Boolean);return{fn:p[0]||'',ln:p.length>1?p[p.length-1]:''};}
-  function matchData(u){var m={external_id:eid};if(!u)return m;var n=names(u.nome);if(u.whats)m.ph=phone(u.whats);if(n.fn)m.fn=n.fn;if(n.ln)m.ln=n.ln;m.country='br';return m;}
-
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init',PIXEL,matchData(null));
+  fbq('init',PIXEL,{external_id:eid});
 
   function send(p){
     p.event_source_url=location.href;p.fbp=ck('_fbp');p.fbc=ck('_fbc');p.external_id=eid;
@@ -44,7 +41,8 @@
   function track(name,data,opts){
     opts=opts||{};data=data||{};
     var id=name+'.'+uid(),cd={};for(var k in data)cd[k]=data[k];
-    try{if(opts.user)fbq('init',PIXEL,matchData(opts.user));fbq(opts.custom?'trackCustom':'track',name,cd,{eventID:id});}catch(_){}
+    // O Pixel inicia uma única vez; nome e telefone seguem pela CAPI, com hash no servidor.
+    try{fbq(opts.custom?'trackCustom':'track',name,cd,{eventID:id});}catch(_){}
     send({event_name:name,event_id:id,custom_data:cd,user:opts.user||null});
     return id;
   }
