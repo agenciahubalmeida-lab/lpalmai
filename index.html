@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ALM AI</title>
 <meta name="description" content="Contratar um vendedor leva semanas. Criar um agente de IA na ALM AI leva minutos. Monte seu time comercial de IA no WhatsApp.">
-<link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" type="image/webp" href="/assets/logo.e6533352f2.webp">
+<link rel="preload" href="/assets/instrument-sans-normal.2ee17598a9.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/instrument-sans-italic.77210cdde0.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://connect.facebook.net">
-<script src="/analytics.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600;1,700&family=Unbounded:wght@700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<script defer src="/analytics.js"></script>
 <script>
 /* Rastreamento Meta: Pixel no navegador + Conversions API (/api/event) com o mesmo event_id para deduplicação */
 (function(){
@@ -62,10 +63,46 @@
 </script>
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=4396005223955499&ev=PageView&noscript=1"></noscript>
 <style>
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: italic;
+  font-weight: 500 700;
+  font-stretch: 100%;
+  font-display: optional;
+  src: url(/assets/instrument-sans-italic.77210cdde0.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-stretch: 100%;
+  font-display: optional;
+  src: url(/assets/instrument-sans-normal.2ee17598a9.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500 600;
+  font-display: swap;
+  src: url(/assets/jetbrains-mono-normal.83c005d49d.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(/assets/unbounded-brand.10214c1688.woff2) format('woff2');
+  unicode-range: U+20, U+41, U+49, U+4c-4d;
+}
+
+
 /* Layout: "contratação" concept. Hero with issued agent ID badges; weeks-vs-minutes timeline; org-chart flow of the agent team; navy webhook band; the form framed as the interview */
 :root{
   --bg:#F3F5FB; --paper:#FFFFFF; --tile:#EBEFF8; --ink:#0A0F1E; --muted:#5B6684; --line:#DCE2EF;
-  --blue:#1F5FFF; --blue2:#3FA2FF; --navy:#07143A; --navy2:#0E2255; --ok:#14A862; --wa:#25D366; --red:#E5484D;
+  --blue:#1F5FFF; --blue2:#3FA2FF; --navy:#07143A; --navy2:#0E2255; --ok:#087A45; --wa:#25D366; --red:#E5484D;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --brand:"Unbounded","Arial Black",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -85,6 +122,7 @@ p{margin:0}
 .lead{font-size:clamp(18px,1.9vw,21px);color:var(--muted);max-width:54ch;line-height:1.5}
 .tag{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
 section{scroll-margin-top:72px}
+main>.s:not(.diag),main>.final{content-visibility:auto;contain-intrinsic-size:auto 800px}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;font:600 17px var(--sans);text-decoration:none;
   padding:18px 28px;border-radius:999px;background:var(--blue);color:#fff;box-shadow:0 14px 32px -12px rgba(31,95,255,.65);transition:transform .15s ease,box-shadow .2s ease}
@@ -309,8 +347,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
 .race .pbar.dead i{background:var(--red)}
 .track.agent .pbar{background:rgba(255,255,255,.12)}
 .track.agent .pbar i{background:linear-gradient(90deg,var(--blue),var(--blue2))}
-.race .pt{opacity:.32;transition:opacity .35s ease}
-.race .pt.on{opacity:1}
+.race .pt{opacity:1}.race .pt::before{opacity:.32;transition:opacity .35s ease}
+.race .pt.on::before{opacity:1}
 .race .pt::before{transition:transform .3s ease}
 .race .pt.on::before{transform:scale(1.25)}
 .race .pt.bad.on p{color:var(--red)}
@@ -335,7 +373,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
 
 <header class="nav">
   <div class="wrap">
-    <a class="logo" href="#topo" aria-label="ALM AI"><span class="ic"><img src="logo.png" alt=""></span><b>ALM <span>AI</span></b></a>
+    <a class="logo" href="#topo" aria-label="ALM AI"><span class="ic"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><b>ALM <span>AI</span></b></a>
     <a class="btn sm" href="#entrevista">Fazer o diagnóstico</a>
   </div>
 </header>
@@ -356,11 +394,11 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
 
       <div class="badges" aria-label="Exemplo de crachás de agentes da ALM AI">
         <span class="lan"></span>
-        <div class="idc mini b1"><div class="clip"></div><div class="top"><span class="ph"><img src="logo.png" alt=""></span><div class="nm"><small>AGENTE · ALM AI</small><b>Closer</b></div></div></div>
-        <div class="idc mini b2"><div class="clip"></div><div class="top"><span class="ph"><img src="logo.png" alt=""></span><div class="nm"><small>AGENTE · ALM AI</small><b>Recuperação</b></div></div></div>
+        <div class="idc mini b1"><div class="clip"></div><div class="top"><span class="ph"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><div class="nm"><small>AGENTE · ALM AI</small><b>Closer</b></div></div></div>
+        <div class="idc mini b2"><div class="clip"></div><div class="top"><span class="ph"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><div class="nm"><small>AGENTE · ALM AI</small><b>Recuperação</b></div></div></div>
         <div class="idc b3">
           <div class="clip"></div>
-          <div class="top"><span class="ph"><img src="logo.png" alt=""></span><div class="nm"><small>AGENTE · ALM AI</small><b>SDR</b><span class="live">Em atendimento</span></div></div>
+          <div class="top"><span class="ph"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><div class="nm"><small>AGENTE · ALM AI</small><b>SDR</b><span class="live">Em atendimento</span></div></div>
           <dl>
             <div><dt>Admitido</dt><dd>hoje, 14:32</dd></div>
             <div><dt>Tempo de contratação</dt><dd>8 minutos</dd></div>
@@ -428,10 +466,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
         <p class="lead">Cada lead entra e passa de agente em agente até a venda, como num time comercial de verdade. Tudo registrado no CRM.</p>
       </div>
       <div class="flow">
-        <div class="node" style="--dl:0s"><span class="lead-chip"></span><div class="hd"><span class="av"><img src="logo.png" alt=""></span><div><small>CARGO</small><h3>SDR</h3></div></div><p>Responde na hora, faz as perguntas certas e separa quem tem perfil de quem só está curioso.</p><span class="say">Hoje, quem cuida do seu atendimento?</span></div>
-        <div class="node" style="--dl:2s"><span class="lead-chip"></span><div class="hd"><span class="av"><img src="logo.png" alt=""></span><div><small>CARGO</small><h3>Closer</h3></div></div><p>Apresenta a oferta certa, quebra objeção e leva até o pagamento ou a reunião.</p><span class="say">Fechamos no plano anual?</span></div>
-        <div class="node" style="--dl:4s"><span class="lead-chip"></span><div class="hd"><span class="av"><img src="logo.png" alt=""></span><div><small>CARGO</small><h3>Recuperação</h3></div></div><p>Volta em quem travou: Pix pendente, boleto em aberto, orçamento sem resposta.</p><span class="say">O Pix ficou pendente. Te ajudo?</span></div>
-        <div class="node" style="--dl:6s"><span class="lead-chip"></span><div class="hd"><span class="av"><img src="logo.png" alt=""></span><div><small>CARGO</small><h3>Pós-venda</h3></div></div><p>Faz o onboarding, pede indicação e prepara a próxima compra.</p><span class="say">Conseguiu começar direitinho?</span></div>
+        <div class="node" style="--dl:0s"><span class="lead-chip"></span><div class="hd"><span class="av"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><div><small>CARGO</small><h3>SDR</h3></div></div><p>Responde na hora, faz as perguntas certas e separa quem tem perfil de quem só está curioso.</p><span class="say">Hoje, quem cuida do seu atendimento?</span></div>
+        <div class="node" style="--dl:2s"><span class="lead-chip"></span><div class="hd"><span class="av"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><div><small>CARGO</small><h3>Closer</h3></div></div><p>Apresenta a oferta certa, quebra objeção e leva até o pagamento ou a reunião.</p><span class="say">Fechamos no plano anual?</span></div>
+        <div class="node" style="--dl:4s"><span class="lead-chip"></span><div class="hd"><span class="av"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><div><small>CARGO</small><h3>Recuperação</h3></div></div><p>Volta em quem travou: Pix pendente, boleto em aberto, orçamento sem resposta.</p><span class="say">O Pix ficou pendente. Te ajudo?</span></div>
+        <div class="node" style="--dl:6s"><span class="lead-chip"></span><div class="hd"><span class="av"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><div><small>CARGO</small><h3>Pós-venda</h3></div></div><p>Faz o onboarding, pede indicação e prepara a próxima compra.</p><span class="say">Conseguiu começar direitinho?</span></div>
       </div>
       <p class="handoff" id="handoff" aria-live="polite"></p>
       <div class="side"><em>E mais:</em><span><i></i>Suporte</span><span><i></i>Agendamento</span><span><i></i>Follow-up</span><span><i></i>Cobrança</span><span><i></i>O cargo que você inventar</span></div>
@@ -601,7 +639,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
   </section>
 </main>
 
-<footer><div class="wrap"><a class="logo" href="#topo"><span class="ic"><img src="logo.png" alt=""></span><b>ALM <span>AI</span></b></a><span>ALM AI by Hub Almeida · Tecnologia e Inovação</span></div></footer>
+<footer><div class="wrap"><a class="logo" href="#topo"><span class="ic"><img src="/assets/logo.e6533352f2.webp" width="96" height="96" alt=""></span><b>ALM <span>AI</span></b></a><span>ALM AI by Hub Almeida · Tecnologia e Inovação</span></div></footer>
 <div class="mcta" id="mcta"><a class="btn" href="#entrevista">Ver qual agente contratar primeiro →</a></div>
 
 <script>
@@ -728,7 +766,9 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
 
   var m=document.getElementById('mcta'),diag=document.getElementById('entrevista');
   var done=false;
-  function onScroll(){if(done){m.classList.remove('show');return;}var d=diag.getBoundingClientRect();var inDiag=d.top<innerHeight&&d.bottom>0;m.classList.toggle('show',scrollY>600&&!inDiag);}
+  var inDiag=false;
+  function onScroll(){m.classList.toggle('show',!done&&scrollY>600&&!inDiag);}
+  if('IntersectionObserver' in window)new IntersectionObserver(function(es){inDiag=es[0].isIntersecting;onScroll();}).observe(diag);
   addEventListener('scroll',onScroll,{passive:true});onScroll();
 
   if('IntersectionObserver' in window){
@@ -787,7 +827,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
     si++;if(si>=nodes.length){si=0;ni++;}
   }
   step();
-  if(!reduce)setInterval(step,2000);
+  var flowVisible=false;
+  if('IntersectionObserver' in window)new IntersectionObserver(function(es){flowVisible=es[0].isIntersecting;}).observe(nodes[0].closest('.org'));
+  else flowVisible=true;
+  if(!reduce)setInterval(function(){if(flowVisible&&!document.hidden)step();},2000);
 })();
 </script>
 

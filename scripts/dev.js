@@ -10,7 +10,7 @@ const routes = {
   '/api/admin/session': '../api/admin/session', '/api/admin/leads': '../api/admin/leads',
   '/api/admin/push': '../api/admin/push', '/api/cron/deliveries': '../api/cron/deliveries',
 };
-const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
+const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.woff2': 'font/woff2', '.txt': 'text/plain; charset=utf-8', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
 http.createServer(async (req, res) => {
   res.status = code => { res.statusCode = code; return res; };
   res.json = data => { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(data)); return res; };

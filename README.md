@@ -8,7 +8,13 @@ Publicado em **https://lpalmai.hubalmeida.com.br/painel**. Banco: projeto ativo 
 
 Validação: nove testes automatizados locais, teste transacional no PostgreSQL real, bloqueio de leitura anônima, gravação real, respostas, UTMs, idempotência, login, cookie seguro, APIs privadas e cadastro no domínio de produção. Os registros fictícios foram removidos. A API Meta continuou aceitando eventos de teste após a publicação. A exibição de notificações no iPhone depende da inscrição e permissão no próprio aparelho e ainda precisa ser confirmada nele.
 
-## Uso no iPhone
+## Desempenho da landing page
+
+PageSpeed Insights oficial de 23/10/2026, 12:49 BRT: **97 no celular**, **96 no computador**, **100 em acessibilidade, boas práticas e SEO** nos dois dispositivos. [Relatório do Google](https://pagespeed.web.dev/analysis/https-lpalmai-hubalmeida-com-br/s13k884sot?form_factor=mobile). No celular, FCP 0,9 s, LCP 2,4 s, TBT 100 ms e CLS 0. As notas são medições de laboratório e podem variar.
+
+As fontes WOFF2 e o logo WebP ficam em `web/assets`, com nomes por conteúdo e cache de um ano. A fonte de marca inclui apenas os caracteres do logotipo; as licenças OFL acompanham os arquivos. As fontes de texto usam `font-display: optional` para evitar trocas tardias em conexões lentas. O build incorpora o coletor pequeno ao HTML, eliminando sua requisição inicial e mantendo a captura desde a entrada. As seções fora da tela usam renderização sob demanda, o botão fixo usa IntersectionObserver e a animação do organograma só avança quando visível. Pixel e CAPI permanecem ativos.
+
+## Acesso e avisos no iPhone
 
 Abra `https://lpalmai.hubalmeida.com.br/painel` no Safari, escolha **Compartilhar → Adicionar à Tela de Início**, abra o ícone **ALM AI**, entre com a mesma senha do painel Sala 404 e toque em **Ativar notificações → Permitir**. Use **Enviar teste** e confira no iPhone. Requer iOS 16.4 ou posterior. A inscrição do aparelho e a entrega real só podem ser verificadas no próprio telefone.
 

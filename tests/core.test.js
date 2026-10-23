@@ -45,6 +45,12 @@ test('dados privados e código do servidor ficam fora da saída estática', () =
   const output = fs.readdirSync('public');
   for (const name of ['.env.local', 'lib', 'api', 'scripts', 'supabase', 'package.json']) assert.equal(output.includes(name), false);
   for (const name of ['index.html', 'painel.html', 'painel.js', 'sw.js', 'manifest.webmanifest']) assert.equal(output.includes(name), true);
+  const landing = fs.readFileSync('public/index.html', 'utf8');
+  assert.equal(landing.includes('fonts.googleapis.com'), false);
+  assert.equal(landing.includes('src="/analytics.js"'), false);
+  assert.ok(landing.includes('window.ALMAnalytics ='));
+  for (const match of landing.matchAll(/\/assets\/[\w.-]+\.(?:woff2|webp)/g)) assert.ok(fs.existsSync('public' + match[0]), match[0]);
+  for (const match of landing.matchAll(/<script>([\s\S]*?)<\/script>/g)) new vm.Script(match[1]);
   const sw = fs.readFileSync('web/sw.js', 'utf8'); assert.equal(sw.includes("addEventListener('fetch'"), false);
   const panel = fs.readFileSync('web/painel.js', 'utf8'); assert.equal(panel.includes('localStorage'), false); assert.equal(panel.includes('innerHTML'), false);
 });
