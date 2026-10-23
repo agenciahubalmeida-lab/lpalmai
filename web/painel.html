@@ -14,6 +14,8 @@
   <link rel="icon" href="/logo.png">
   <link rel="stylesheet" href="/painel.css">
   <script src="/painel.js" defer></script>
+  <link rel="stylesheet" href="/analytics-panel.css">
+  <script src="/analytics-panel.js" defer></script>
 </head>
 <body>
   <header class="top"><a class="brand" href="/painel"><img src="/logo.png" alt="" width="34" height="34"><span>ALM <b>AI</b></span></a><span class="private"><i></i> Acesso privado</span><button id="logout" class="text-button" hidden>Sair</button></header>
@@ -39,6 +41,29 @@
         <div class="stat"><span>Qualificados</span><b id="stat-qualified">0</b><small>Perfis A e B</small></div>
         <div class="stat"><span>Total</span><b id="stat-total">0</b><small>Respostas salvas</small></div>
       </div>
+      <section class="analytics-panel" id="trafego" aria-labelledby="traffic-title">
+        <div class="list-heading"><div><span class="eyebrow">DO PRIMEIRO ACESSO AO CONTATO</span><h2 id="traffic-title">Tráfego e conversão</h2></div><label class="period">Período<select id="analytics-period"><option value="1">Hoje</option><option value="7" selected>7 dias</option><option value="30">30 dias</option><option value="90">90 dias</option><option value="0">Desde o início</option></select></label></div>
+        <p class="analytics-intro">Veja onde as visitas viram oportunidades e em qual ponto as pessoas param.</p>
+        <p id="analytics-error" class="error" role="alert" hidden></p>
+        <div id="analytics-loading" class="muted" role="status">Carregando métricas…</div>
+        <div id="analytics-content" hidden>
+          <div id="traffic-cards" class="traffic-cards"></div>
+          <div class="analytics-box"><h3>Funil da página</h3><p class="metric-help">Cada etapa conta sessões distintas. Uma mesma sessão pode alcançar várias etapas.</p><div id="traffic-funnel"></div></div>
+          <div class="analytics-grid">
+            <div class="analytics-box"><h3>Onde o diagnóstico para</h3><p class="metric-help">O abandono é confirmado após 30 minutos sem atividade e sem diagnóstico salvo.</p><div class="table-scroll"><table><thead><tr><th>Etapa</th><th>Chegaram</th><th>Responderam</th><th>Abandonaram</th></tr></thead><tbody id="traffic-steps"></tbody></table></div></div>
+            <div class="analytics-box"><h3>Interesse na página</h3><div id="traffic-engagement"></div><h4>Até onde rolaram</h4><div id="traffic-scroll"></div><h4>Cliques para o diagnóstico</h4><div id="traffic-ctas"></div></div>
+          </div>
+          <details class="analytics-box" open><summary>Origem e campanhas</summary><div class="table-scroll"><table><thead><tr><th>Origem</th><th>Sessões</th><th>Cadastros</th><th>Conversão</th></tr></thead><tbody id="traffic-sources"></tbody></table></div><h4>Campanhas</h4><div class="table-scroll"><table><thead><tr><th>Campanha / origem</th><th>Sessões</th><th>Iniciaram</th><th>Cadastros</th><th>WhatsApp</th></tr></thead><tbody id="traffic-campaigns"></tbody></table></div><p class="metric-help">Use utm_source, utm_medium, utm_campaign e utm_content nos links dos anúncios para identificar os resultados.</p></details>
+          <div class="analytics-grid">
+            <details class="analytics-box" open><summary>Acessos por dia</summary><div class="table-scroll"><table><thead><tr><th>Data</th><th>Sessões</th><th>Únicos</th><th>Cadastros</th></tr></thead><tbody id="traffic-daily"></tbody></table></div></details>
+            <div class="analytics-box"><h3>Dispositivos</h3><div id="traffic-devices"></div><p class="metric-help">“Únicos” estima navegadores, não pessoas identificadas. Trocar de aparelho ou apagar os dados do navegador pode contar uma nova visita única.</p></div>
+          </div>
+          <details class="analytics-box"><summary>Últimas 20 sessões</summary><p class="metric-help">Histórico de comportamento sem nome ou valores digitados. “Recente” significa atividade nos últimos 30 minutos, não confirmação de que a pessoa ainda está na tela.</p><div class="table-scroll"><table><thead><tr><th>Entrada</th><th>Origem / dispositivo</th><th>Status</th><th>Etapa</th><th>Tempo ativo</th></tr></thead><tbody id="traffic-recent"></tbody></table></div></details>
+        </div>
+        <p id="analytics-note" class="metric-help"></p>
+        <label class="exclude-visits"><input type="checkbox" id="exclude-my-visits"> Excluir minhas próximas visitas neste navegador</label>
+        <p class="metric-help">A medição começou nesta atualização. Bloqueadores, falhas de conexão e navegação sem JavaScript podem reduzir as contagens. Clique no WhatsApp não confirma envio de mensagem.</p>
+      </section>
       <section class="notifications" id="avisos" aria-labelledby="push-title">
         <div class="notification-icon" aria-hidden="true">♧</div>
         <div class="notification-copy"><span class="eyebrow">AVISOS NO SEU CELULAR</span><h2 id="push-title">Chegou um diagnóstico.<br>Você fica sabendo.</h2><p id="push-state">Preparando as notificações…</p></div>
@@ -58,7 +83,7 @@
         <p class="list-footer" id="updated-at"></p>
       </section>
       <footer class="footer">ALM AI <span>·</span> Hub Almeida</footer>
-      <nav class="bottom-nav" aria-label="Navegação do painel"><a href="#diagnosticos"><span aria-hidden="true">▤</span>Diagnósticos</a><a href="#avisos"><span aria-hidden="true">♧</span>Notificações</a></nav>
+      <nav class="bottom-nav" aria-label="Navegação do painel"><a href="#trafego"><span aria-hidden="true">↗</span>Tráfego</a><a href="#diagnosticos"><span aria-hidden="true">▤</span>Diagnósticos</a><a href="#avisos"><span aria-hidden="true">♧</span>Avisos</a></nav>
     </section>
   </main>
 </body>

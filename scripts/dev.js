@@ -5,6 +5,7 @@ if (fs.existsSync('.env.local')) process.loadEnvFile('.env.local');
 require('./build');
 const root = path.resolve('public');
 const routes = {
+  '/api/analytics': '../api/analytics', '/api/admin/analytics': '../api/admin/analytics',
   '/api/event': '../api/event', '/api/leads': '../api/leads',
   '/api/admin/session': '../api/admin/session', '/api/admin/leads': '../api/admin/leads',
   '/api/admin/push': '../api/admin/push', '/api/cron/deliveries': '../api/cron/deliveries',

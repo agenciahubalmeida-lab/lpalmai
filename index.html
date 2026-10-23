@@ -7,6 +7,7 @@
 <meta name="description" content="Contratar um vendedor leva semanas. Criar um agente de IA na ALM AI leva minutos. Monte seu time comercial de IA no WhatsApp.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="preconnect" href="https://connect.facebook.net">
+<script src="/analytics.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600;1,700&family=Unbounded:wght@700;800&family=JetBrains+Mono:wght@500;600&display=swap">
 <script>
 /* Rastreamento Meta: Pixel no navegador + Conversions API (/api/event) com o mesmo event_id para deduplicação */
@@ -41,6 +42,7 @@
   function track(name,data,opts){
     opts=opts||{};data=data||{};
     var id=opts.event_id||name+'.'+uid(),cd={};for(var k in data)cd[k]=data[k];
+    try{if(window.ALMAnalytics)window.ALMAnalytics.meta(name,data);}catch(_){}
     // O Pixel inicia uma única vez; nome e telefone seguem pela CAPI, com hash no servidor.
     try{fbq(opts.custom?'trackCustom':'track',name,cd,{eventID:id});}catch(_){}
     send({event_name:name,event_id:id,custom_data:cd,user:opts.user||null});
@@ -667,10 +669,11 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;
     }
     var saved;
     try{
-      var response=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submission_id:submissionId,nome:ans.nome,empresa:ans.empresa,whats:ans.whats,ig:ans.ig,answers:{atende:ans.atende,espera:ans.espera,leads:ans.leads,perdas:ans.perdas,segmento:ans.segmento,investimento:ans.investimento},utm:TRACK.utm||{},referrer:document.referrer}),signal:AbortSignal.timeout(25000)});
+      var response=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({submission_id:submissionId,nome:ans.nome,empresa:ans.empresa,whats:ans.whats,ig:ans.ig,answers:{atende:ans.atende,espera:ans.espera,leads:ans.leads,perdas:ans.perdas,segmento:ans.segmento,investimento:ans.investimento},utm:TRACK.utm||{},referrer:document.referrer,analytics:window.ALMAnalytics?window.ALMAnalytics.context():null}),signal:AbortSignal.timeout(25000)});
       saved=await response.json();
       if(!response.ok||!saved.ok)throw Error(saved.error||'Não foi possível salvar. Tente novamente.');
     }catch(e){
+      try{if(window.ALMAnalytics)window.ALMAnalytics.emit('submit_error',{step:7,label:e.name==='TimeoutError'||e.name==='TypeError'?'network':'server'});}catch(_){}
       err.textContent=e.name==='TimeoutError'||e.name==='AbortError'?'O salvamento demorou mais que o esperado. Suas respostas continuam aqui. Tente novamente.':e.message==='Failed to fetch'?'Sem conexão. Confira sua internet e tente novamente.':e.message;
       saving=false;nextBtn.disabled=false;backBtn.disabled=false;nextBtn.textContent='Ver meu resultado →';return;
     }

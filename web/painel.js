@@ -32,6 +32,7 @@
     return data;
   }
   function showLogin() {
+    if(window.ALMReport)window.ALMReport.authenticate(false);
     state.authenticated = false; state.leads = []; state.stats = {}; state.cursor = null;
     $('leads').replaceChildren(); $('dashboard').hidden = true; $('logout').hidden = true;
     $('login-view').hidden = false; $('opening').hidden = true;
@@ -39,6 +40,7 @@
   async function showDashboard() {
     state.authenticated = true; $('login-view').hidden = true; $('opening').hidden = true;
     $('dashboard').hidden = false; $('logout').hidden = false;
+    if(window.ALMReport)window.ALMReport.authenticate(true);
     await refresh();
     void preparePush();
   }
@@ -210,7 +212,7 @@
   });
   $('show-password').addEventListener('click', function () { var show = $('password').type === 'password'; $('password').type = show ? 'text' : 'password'; this.textContent = show ? 'Ocultar' : 'Mostrar'; this.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha'); });
   $('logout').addEventListener('click', async function () { try { await api('/api/admin/session', { method: 'DELETE' }); showLogin(); } catch (error) { message('panel-error', friendly(error)); $('panel-error').hidden = false; } });
-  $('refresh').addEventListener('click', function () { void refresh(); });
+  $('refresh').addEventListener('click', function () { void refresh(); if(window.ALMReport)void window.ALMReport.refresh(); });
   $('load-more').addEventListener('click', function () { void refresh(true); });
   $('search-form').addEventListener('submit', function (event) { event.preventDefault(); state.search = $('search').value.trim(); void refresh(); });
   $('search').addEventListener('search', function () { if (!this.value) { state.search = ''; void refresh(); } });
@@ -232,6 +234,6 @@
   });
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && state.authenticated && !state.loading) void refresh(); });
   window.addEventListener('online', function () { if (state.authenticated) void refresh(); });
-  setInterval(function () { if (document.visibilityState === 'visible' && state.authenticated && !state.loading && !$('leads').querySelector('details[open]') && document.activeElement !== $('search')) void refresh(); }, 30000);
+  setInterval(function () { if (document.visibilityState === 'visible' && state.authenticated && !state.loading && !$('leads').querySelector('details[open]') && document.activeElement !== $('search')) { void refresh(); if(window.ALMReport)void window.ALMReport.refresh(); } }, 30000);
   (async function () { try { var result = await api('/api/admin/session'); if (result.authenticated) await showDashboard(); else showLogin(); } catch (error) { showLogin(); message('login-error', friendly(error)); } })();
 })();

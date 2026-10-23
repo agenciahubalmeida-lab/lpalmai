@@ -14,7 +14,15 @@ Abra `https://lpalmai.hubalmeida.com.br/painel` no Safari, escolha **Compartilha
 
 O painel mostra todas as respostas, contato, empresa, perfil, agentes sugeridos e UTMs. Há busca, filtros, paginação de 50 em 50, indicadores e marcação como lido ao abrir um diagnóstico. Os horários usam America/Sao_Paulo.
 
-## Desenvolvimento
+## Métricas de tráfego
+
+O painel em `/painel#trafego` reúne sessões, navegadores únicos, carregamentos, retornos, conversão, abandono após 30 minutos sem atividade, funil por etapa, tempo ativo, rolagem, cliques nos botões e no WhatsApp, dispositivos e acessos por dia. Os filtros permitem hoje, 7, 30, 90 dias ou todo o histórico disponível. A medição começa na publicação desta atualização; não há reconstrução de visitas anteriores. “Únicos” estima navegadores, e clique no WhatsApp não confirma envio de mensagem.
+
+Identifique os anúncios com `utm_source`, `utm_medium`, `utm_campaign` e `utm_content`, por exemplo `/?utm_source=instagram&utm_medium=paid_social&utm_campaign=agentes&utm_content=video_01`. A origem é atribuída à entrada da sessão. Marque **Excluir minhas próximas visitas neste navegador** para retirar seus próximos acessos da contagem. A exclusão precisa ser marcada em cada navegador/aparelho usado.
+
+Os dados de comportamento são privados e independem do Pixel. O coletor não captura valores digitados, IP bruto, URLs completas de referência ou o User-Agent bruto; guarda identificador de navegador com HMAC, eventos permitidos e metadados limitados. O cadastro é contado como conversão após gravação confirmada no servidor. Bloqueadores e falhas de conexão podem reduzir as contagens. A estrutura está em `supabase/002_analytics.sql`; testes adicionais cobrem deduplicação, privacidade, sessões, filtros e relatório. `tests/analytics.sql` verifica o banco em uma transação revertida; `node tests/analytics-live.js` verifica a API publicada com dados de teste excluídos e removidos ao final.
+
+## Desenvolvimento local
 
 `npm install`, `npm run build`, `npm test`. `npm run dev` inicia em `http://127.0.0.1:3030`, usando `.env.local`. `node tests/preview.js` inicia uma prévia isolada com banco simulado e senha de teste `teste-local-alm`; nenhum envio externo é realizado nessa prévia. Não publique a prévia como produção.
 

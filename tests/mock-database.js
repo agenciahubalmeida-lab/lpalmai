@@ -4,7 +4,7 @@ function fixture(overrides = {}) {
   return { id: crypto.randomUUID(), submission_id: crypto.randomUUID(), protocolo: 'ALM-DEMONSTRACAO', nome: 'Marina Teste', empresa: 'Aurora Studio · demonstração', whatsapp: '5511900000000', instagram: '@demonstracao', respostas: { atende: 'Uma pessoa do time', espera: 'Algumas horas', leads: 'De 500 a 2.000', perdas: ['Demora no primeiro atendimento', 'Follow-up que ninguém faz'], segmento: 'Serviços e consultoria', investimento: 'Sim, se resolver, faz sentido' }, tier: 'alto', team: ['sdr', 'closer'], utm: { utm_source: 'instagram', utm_medium: 'paid', utm_campaign: 'Time comercial de IA' }, source_url: 'https://lpalmai.hubalmeida.com.br/', created_at: new Date().toISOString(), read_at: null, notification_sent_at: null, notification_attempts: 0, notification_next_at: new Date().toISOString(), notification_lock_until: null, notification_error: null, ...overrides };
 }
 async function startMockDatabase(port = 0, seed = []) {
-  const state = { leads: [...seed], subscriptions: [], receipts: [], requests: 0, rates: new Map() };
+  const state = { leads: [...seed], subscriptions: [], receipts: [], requests: 0, rates: new Map(), analytics: [] };
   const server = http.createServer(async (req, res) => {
     state.requests++;
     res.setHeader('Content-Type', 'application/json');
@@ -14,6 +14,19 @@ async function startMockDatabase(port = 0, seed = []) {
     const route = url.pathname.replace('/rest/v1/', '');
     let raw = ''; for await (const chunk of req) raw += chunk;
     const body = raw ? JSON.parse(raw) : {};
+    if (route === 'rpc/alm_ai_ingest_analytics') { state.analytics.push(body.p); return respond(204); }
+    if (route === 'rpc/alm_ai_link_analytics') return respond(204);
+    if (route === 'rpc/alm_ai_analytics_report') {
+      const demo = seed.length > 0;
+      const s = demo ? { sessions: 128, visitors: 112, pageviews: 156, returningSessions: 16, activeSessions: 5, online: 2, untouched: 51, notConverted: 99, abandoned: 48, quizViewed: 89, quizStarted: 72, contactStarted: 31, conversions: 24, whatsapp: 18, cta: 81, formErrors: 7, submitErrors: 1, avgActiveSeconds: 52, engaged: 94 } : { sessions: 0 };
+      return respond(200, { days: body.p_days, startedAt: new Date(Date.now()-86400000*7).toISOString(), since: new Date().toISOString(), generatedAt: new Date().toISOString(), summary: s,
+        sources: demo ? [{ label: 'instagram', sessions: 84, leads: 17 },{ label: 'facebook', sessions: 26, leads: 5 },{ label: 'Direto / não identificado', sessions: 18, leads: 2 }] : [],
+        campaigns: demo ? [{ label: 'Demonstração · Time comercial', source: 'instagram', content: 'video-01', sessions: 84, started: 53, leads: 17, whatsapp: 13 }] : [],
+        devices: demo ? [{ label:'Celular',sessions:116,leads:21 },{label:'Computador',sessions:12,leads:3}] : [],
+        daily: demo ? [{day:'2026-10-23',sessions:128,visitors:112,leads:24}] : [],
+        steps: Array.from({length:7},(_,i)=>({step:i+1,reached:demo?[72,65,54,48,41,36,31][i]:0,answered:demo?[65,54,48,41,36,31,24][i]:0,abandoned:demo?[7,11,6,7,5,5,7][i]:0})),
+        scroll: [25,50,75,90,100].map((v,i)=>({percent:v,sessions:demo?[110,91,64,31,24][i]:0})),ctas:demo?[{label:'hero',sessions:62},{label:'floating',sessions:19}]:[],recent:[] });
+    }
     if (route === 'rpc/alm_ai_allow_request') {
       const rate = (state.rates.get(body.p_key) || 0) + 1; state.rates.set(body.p_key, rate); return respond(200, rate <= body.p_limit);
     }
